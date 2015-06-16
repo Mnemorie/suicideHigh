@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Game : MonoBehaviour 
+public class ShootOut : MonoBehaviour
 {
     public enum EState
     {
@@ -14,11 +14,11 @@ public class Game : MonoBehaviour
     public EState State;
 
     // Use this for initialization
-	void Start ()
+    void Start()
     {
         State = EState.PlayersJoining;
         LevelResult = ELevelResult.None;
-	}
+    }
 
     public enum ELevelResult
     {
@@ -28,8 +28,8 @@ public class Game : MonoBehaviour
     }
     public ELevelResult LevelResult;
 
-	// Update is called once per frame
-	void Update () 
+    // Update is called once per frame
+    void Update()
     {
         if (State == EState.PlayersJoining)
         {
@@ -46,7 +46,7 @@ public class Game : MonoBehaviour
                     c.Go = true;
                 }
 
-                FindObjectOfType<TrafficLight>().Go();
+                // FindObjectOfType<TrafficLight>().Go();
             }
         }
         else if (State == EState.Playing)
@@ -74,11 +74,11 @@ public class Game : MonoBehaviour
                 LevelStartTimer = TimeToStartLevelWhenPlayersReady;
             }
         }
-	}
+    }
 
     public float TimeBetweenLevels = 5;
     private float NextLevelTimer;
-    
+
     public float TimeToStartLevelWhenPlayersReady = 3;
     private float LevelStartTimer;
 
@@ -103,7 +103,7 @@ public class Game : MonoBehaviour
             }
 
             Character respawnedCharacter = (Character)Instantiate(CharacterTemplate, character.transform.position, character.transform.rotation);
-            
+
             respawnedCharacter.KeyCode = character.KeyCode;
             respawnedCharacter.Body.material.color = character.Body.material.color;
 
@@ -125,14 +125,12 @@ public class Game : MonoBehaviour
         {
             return;
         }
-                   
+
         Debug.Log("new contender! " + Event.current.keyCode);
         CreatePlayer(Event.current.keyCode);
     }
 
     public Character CharacterTemplate;
-    public float DistanceBetweenCharacters = 2;
-
     public List<Character> Characters = new List<Character>();
 
     public void CreatePlayer(KeyCode keyCode)
@@ -159,13 +157,18 @@ public class Game : MonoBehaviour
         return false;
     }
 
+    public float DistanceFromCenter = 5;
+
     private void RepositionCharacters()
     {
-        float leftMost = ((Characters.Count - 1) * DistanceBetweenCharacters) / 2;
+        float positionalAngle = 360f / Characters.Count;
+
         for (int i = 0; i < Characters.Count; ++i)
         {
             Character c = Characters[i];
-            c.transform.position = ((leftMost - (i * DistanceBetweenCharacters)) * Vector3.left) + new Vector3(0, c.transform.position.y, 0);
+
+            c.transform.position = transform.position + (Quaternion.AngleAxis(i * positionalAngle, Vector3.up) * Vector3.forward * DistanceFromCenter);
+            c.transform.LookAt(transform);
         }
     }
 }

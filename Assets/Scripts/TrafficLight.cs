@@ -16,7 +16,7 @@ public class TrafficLight : MonoBehaviour
 
     public Traffic Traffic;
 
-    private Game Game;
+    private PlayInTraffic Game;
 
     public enum ELight
     {
@@ -43,7 +43,7 @@ public class TrafficLight : MonoBehaviour
         WaitLight.material.color = Color.white;
         StopLight.material.color = Color.red;
 
-        Game = FindObjectOfType<Game>();
+        Game = FindObjectOfType<PlayInTraffic>();
     }
 
     private float CycleTime;

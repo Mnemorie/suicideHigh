@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+[SelectionBase]
 public class Character : MonoBehaviour {
 
     public KeyCode KeyCode;
