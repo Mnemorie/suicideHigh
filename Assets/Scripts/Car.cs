@@ -6,6 +6,8 @@ public class Car : MonoBehaviour
     public float Speed = 10; // meters per second
 
     private Rigidbody RigidBody;
+    public bool StopAtRedLight;
+    public float StopLinePosition; // on X axis
 
 	// Use this for initialization
 	void Start () 
@@ -16,7 +18,11 @@ public class Car : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate () 
     {
-        transform.Translate(Speed * Vector3.forward * Time.fixedDeltaTime);
+        if (!StopAtRedLight ||
+            (StopAtRedLight && transform.position.x > StopLinePosition))
+        {
+            transform.Translate(Speed * Vector3.forward * Time.fixedDeltaTime);
+        }
 	}
 
     void OnCollisionEnter(Collision collision)

@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TrafficLight : MonoBehaviour {
-
+public class TrafficLight : MonoBehaviour 
+{
     public Renderer GoLight;
     public Renderer WaitLight;
     public Renderer StopLight;
@@ -12,6 +12,7 @@ public class TrafficLight : MonoBehaviour {
     public float GreenLightDuration = 2;
 
     public float TimeScale = 1;
+    public float TimeScaleIncrement = 0.05f;
 
     public Traffic Traffic;
 
@@ -25,7 +26,14 @@ public class TrafficLight : MonoBehaviour {
     }
     ELight Light;
 
-    public bool Go;
+    private bool Running;
+    public void Go()
+    {
+        Running = true;
+        Traffic.SpawnCar();
+        CycleTime = 0;
+        TimeScale = 1;
+    }
 
     void Start()
     {
@@ -42,7 +50,7 @@ public class TrafficLight : MonoBehaviour {
 
     void Update()
     {
-        if (!Go)
+        if (!Running)
         {
             return;
         }
@@ -52,7 +60,7 @@ public class TrafficLight : MonoBehaviour {
         if ((Game.Characters.FindAll(c => c.IsDead).Count == Game.Characters.Count - 1) ||
             (Game.Characters.FindAll(c => c.IsDead).Count == Game.Characters.Count))
         {
-            Go = false;
+            Running = false;
 
             GoLight.material.color = Color.white;
             WaitLight.material.color = Color.white;
@@ -81,13 +89,19 @@ public class TrafficLight : MonoBehaviour {
             WaitLight.material.color = Color.white;
             StopLight.material.color = Color.white;
             Light = ELight.Green;
-            
-            Traffic.SpawnCar();
+
+            foreach (Car c in FindObjectsOfType<Car>())
+            {
+                c.StopAtRedLight = false;
+            }
+
+            TimeScale += TimeScaleIncrement;
         }
         
         if (CycleTime > RedLightDuration + YellowLightDuration + GreenLightDuration)
         {
             CycleTime = 0;
+            Traffic.SpawnCar();
         }
     }
 

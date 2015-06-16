@@ -3,10 +3,13 @@ using System.Collections;
 
 public class Traffic : MonoBehaviour 
 {
-    public GameObject CarTemplate;
+    public Car CarTemplate;
+    public Transform StopLine;
 
     public void SpawnCar()
     {
-        Instantiate(CarTemplate, transform.position, transform.rotation);
+        Car car = (Car)Instantiate(CarTemplate, transform.position, transform.rotation);
+        car.StopAtRedLight = true;
+        car.StopLinePosition = StopLine.position.x;
     }
 }

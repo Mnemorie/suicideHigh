@@ -33,7 +33,12 @@ public class Game : MonoBehaviour
     {
         if (State == EState.PlayersJoining)
         {
-            if (Input.GetKeyDown(KeyCode.F1))
+            if (Characters.Count > 1)
+            {
+                LevelStartTimer -= Time.deltaTime;
+            }
+
+            if (LevelStartTimer < 0)
             {
                 State = EState.Playing;
                 foreach (Character c in Characters)
@@ -41,7 +46,7 @@ public class Game : MonoBehaviour
                     c.Go = true;
                 }
 
-                FindObjectOfType<TrafficLight>().Go = true;
+                FindObjectOfType<TrafficLight>().Go();
             }
         }
         else if (State == EState.Playing)
@@ -66,12 +71,16 @@ public class Game : MonoBehaviour
             {
                 SpawnNextLevel();
                 State = EState.PlayersJoining;
+                LevelStartTimer = TimeToStartLevelWhenPlayersReady;
             }
         }
 	}
 
     public float TimeBetweenLevels = 5;
     private float NextLevelTimer;
+    
+    public float TimeToStartLevelWhenPlayersReady = 3;
+    private float LevelStartTimer;
 
     void TriggerWaitingForNextLevel()
     {
@@ -128,12 +137,14 @@ public class Game : MonoBehaviour
 
     public void CreatePlayer(KeyCode keyCode)
     {
-        Character newCharacter = (Character)Instantiate(CharacterTemplate);
+        Character newCharacter = Instantiate(CharacterTemplate);
         newCharacter.KeyCode = keyCode;
 
         Characters.Add(newCharacter);
 
         RepositionCharacters();
+
+        LevelStartTimer = TimeToStartLevelWhenPlayersReady;
     }
 
     public bool IsOccupied(KeyCode key)
